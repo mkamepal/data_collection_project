@@ -22,7 +22,9 @@ file_key = 'data-collection.xlsx'
 
 @app.route('/put', methods=['POST'])
 def put_data():
+    print("hey i am here in put function")
     data = request.json
+    print(data)
     new_data = pd.DataFrame([data])
 
     # Save the new data to an Excel file
@@ -39,10 +41,17 @@ def put_data():
 @app.route('/get', methods=['GET'])
 def get_data():
     # Download the Excel file from S3
+    #print("I am in get function")
     response = s3_client.get_object(Bucket=bucket_name, Key=file_key)
-    data = pd.read_excel(response['Body'])
-
+    #print(response['Body'])
+    contents = response['Body'].read()
+    df = pd.read_excel(io.BytesIO(contents))
+    #data = pd.read_excel(response['Body'])
     # Convert the data to JSON format
-    data_json = data.to_json(orient='records')
+    #data_json = data.to_json(orient='records')
+    #print(df)
+    df_json = df.to_json(orient='records')
+    return jsonify(json.loads(df_json))
 
-    return jsonify(json.loads(data_json))
+if __name__ == '__main__':
+    app.run(debug=True)

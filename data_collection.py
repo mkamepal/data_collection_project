@@ -3,6 +3,8 @@ import pandas as pd
 from flask import Flask, request, jsonify
 import io
 import json
+from dotenv import load_dotenv
+import os
 
 app = Flask(__name__)
 
@@ -54,4 +56,4 @@ def get_data():
     return jsonify(json.loads(df_json))
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)
